@@ -1,4 +1,4 @@
-part of 'home_bloc.dart';
+part of 'cubit.dart';
 
 abstract class HomeStates {}
 

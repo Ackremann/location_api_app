@@ -1,6 +1,6 @@
-# location_api_app
+# inout_training
 
-A new Flutter project.
+Group V2 (12/21 - 2/22)
 
 ## Getting Started
 

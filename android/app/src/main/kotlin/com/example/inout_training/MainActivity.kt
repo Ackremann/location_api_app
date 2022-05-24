@@ -1,4 +1,4 @@
-package com.example.location_api_app
+package com.example.inout_training
 
 import io.flutter.embedding.android.FlutterActivity
 

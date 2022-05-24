@@ -1,32 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:location_api_app/features/home/bloc/home_bloc.dart';
-import 'package:location_api_app/widget/loading_indicator.dart';
+import 'package:inout_training/core/router/router.dart';
+import 'package:inout_training/features/home/cubit.dart';
+import 'package:inout_training/features/search/view.dart';
+import 'package:inout_training/widgets/loading_indicator.dart';
 
 class HomeView extends StatelessWidget {
-  const HomeView({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      lazy: false,
       create: (context) => HomeCubit()..getCurrentWeather(),
       child: Scaffold(
-        appBar: AppBar(),
-        body: Center(
+        appBar: AppBar(
+          actions: [
+            IconButton(onPressed: () => MagicRouter.navigateTo(SearchView()), icon: Icon(Icons.search),),
+          ],
+        ),
+        body: SizedBox(
+          width: double.infinity,
           child: BlocBuilder<HomeCubit, HomeStates>(
             builder: (context, state) {
-              // final cubit = HomeCubit.of(context);
-              // final weather = cubit.weather;
-
-              return state is HomeLoading
-                  ? const LoadingIndicator()
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('data'),
-                      ],
-                    );
+              final cubit = HomeCubit.of(context);
+              final weather = cubit.weather;
+              return state is HomeLoading ? LoadingIndicator() : Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text(weather!.main!.temp!.toString(), style: Theme.of(context).textTheme.headline5),
+                  Text(weather.weather!.first.main!, style: Theme.of(context).textTheme.headline5),
+                  Text(weather.name!, style: Theme.of(context).textTheme.headline5),
+                  Text(weather.sys!.country!, style: Theme.of(context).textTheme.headline5),
+                  Text(DateTime.fromMillisecondsSinceEpoch(weather.sys!.sunrise!).toString(), style: Theme.of(context).textTheme.headline5),
+                ],
+              );
             },
           ),
         ),

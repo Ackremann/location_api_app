@@ -1,22 +1,21 @@
 import 'package:dio/dio.dart';
 
 class DioHelper {
-  // ignore: constant_identifier_names
-  static const String _API_KEY = '28cced5aa09c415881631360640fa086';
-  // ignore: constant_identifier_names
-  static const String _BASE_URL =
-      'https://api.openweathermap.org/data/2.5/weather?';
 
-  static Dio _dio = Dio()..options.validateStatus = (v) => v! < 500;
+  static const String _API_KEY = 'e48bfbc78ac07fa4af892619b231f0b2';
+  static const String _BASE_URL = 'http://api.openweathermap.org/data/2.5/weather?';
 
-  static Future<Response<dynamic>> post(String path, {dynamic data}) async =>
-      await _dio.post(_BASE_URL + path + '&appid=' + _API_KEY, data: data);
-  static Future<Response<dynamic>> get(String path) {
-    final response = _dio.get(_BASE_URL + path + '&appid=' + _API_KEY);
+  static Dio _dio = Dio()..options.baseUrl = _BASE_URL..options.validateStatus = (v) => v! < 500;
+
+  // http://api.openweathermap.org/data/2.5/weather? lat=31&lon=31 &appid=be2acbcfe99b5fe0e4e59c3b35c3dd23
+  static Future<Response<dynamic>> post(String path,{Map<String, dynamic>? formData,dynamic body,Function(int,int)? onSendProgress}){
+    final response = _dio.post(path + '&appid=' + _API_KEY,data: formData != null ? formData : body,onSendProgress: onSendProgress);
     return response;
   }
-}
-/*
-lat={lat}&lon={lon}
 
-*/
+  static Future<Response<dynamic>> get(String path){
+    final response = _dio.get(path + '&appid=' + _API_KEY);
+    return response;
+  }
+
+}

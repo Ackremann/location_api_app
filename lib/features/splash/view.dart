@@ -1,42 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:location_api_app/core/loctaion_services/location_services.dart';
-import 'package:location_api_app/core/routes/magic_router.dart';
-import 'package:location_api_app/features/home/view.dart';
+import 'package:inout_training/core/location_services/location_services.dart';
+import 'package:inout_training/core/router/router.dart';
+import 'package:inout_training/features/home/view.dart';
+import 'package:inout_training/features/splash/units/location_denied_dialog.dart';
+import 'package:inout_training/widgets/loading_indicator.dart';
 
 class SplashView extends StatefulWidget {
-  const SplashView({Key? key}) : super(key: key);
-
   @override
   State<SplashView> createState() => _SplashViewState();
 }
 
-class _SplashViewState extends State<SplashView> {
+class _SplashViewState extends State<SplashView> with WidgetsBindingObserver {
+
+  AppLifecycleState previousState = AppLifecycleState.inactive;
+
   @override
   void initState() {
+    WidgetsBinding.instance!.addObserver(this);
     getLocation();
-
     super.initState();
-    print('start');
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if(state == AppLifecycleState.resumed && previousState == AppLifecycleState.paused){
+      MagicRouter.navigateAndPopAll(SplashView());
+    }
+    previousState = state;
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
   }
 
   void getLocation() async {
-    final position = await LocationServisec.getCurrentLocation();
-    print(position.latitude);
-    print(position.longitude);
-    print('#' * 10);
-
-    MagicRouter.navigateAndPopAll(HomeView());
+    await LocationServices.getCurrentLocation();
+    if(LocationServices.currentPosition == null){
+      showLocationDeniedDialog();
+    }else{
+      MagicRouter.navigateAndPopAll(HomeView());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: Center(
-        child: Icon(
-          Icons.stream,
-          size: 50,
-        ),
+        child: LoadingIndicator(),
       ),
     );
   }
